@@ -17,3 +17,5 @@ test.env
 *.log
 logs/
 .venv*
+*.sublime*
+.python-version

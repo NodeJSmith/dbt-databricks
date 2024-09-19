@@ -1,12 +1,12 @@
 import os
-from typing import Any, Dict, Optional
+from typing import Any
+from typing import Dict
+from typing import Optional
 
 
 def get_databricks_cluster_target(profile_type: str):
     if profile_type == "databricks_cluster":
         return databricks_cluster_target()
-    elif profile_type == "databricks_sql_endpoint":
-        return databricks_sql_endpoint_target()
     elif profile_type == "databricks_uc_cluster":
         return databricks_uc_cluster_target()
     elif profile_type == "databricks_uc_sql_endpoint":
@@ -18,6 +18,7 @@ def get_databricks_cluster_target(profile_type: str):
 def _build_databricks_cluster_target(
     http_path: str,
     catalog: Optional[str] = None,
+    schema: Optional[str] = None,
     session_properties: Optional[Dict[str, str]] = None,
 ):
     profile: Dict[str, Any] = {
@@ -30,12 +31,21 @@ def _build_databricks_cluster_target(
         "connect_retries": 3,
         "connect_timeout": 5,
         "retry_all": True,
-        "auth_type": "oauth",
+        "auth_type": os.getenv("DBT_DATABRICKS_AUTH_TYPE", "oauth"),
     }
     if catalog is not None:
         profile["catalog"] = catalog
+    if schema is not None:
+        profile["schema"] = schema
     if session_properties is not None:
         profile["session_properties"] = session_properties
+    if os.getenv("DBT_DATABRICKS_PORT"):
+        profile["connection_parameters"] = {
+            "_port": os.getenv("DBT_DATABRICKS_PORT"),
+            # If you are specifying a port for running tests, assume Docker
+            # is being used and disable TLS verification
+            "_tls_no_verify": True,
+        }
     return profile
 
 
@@ -43,15 +53,8 @@ def databricks_cluster_target():
     return _build_databricks_cluster_target(
         http_path=os.getenv(
             "DBT_DATABRICKS_CLUSTER_HTTP_PATH", os.getenv("DBT_DATABRICKS_HTTP_PATH")
-        )
-    )
-
-
-def databricks_sql_endpoint_target():
-    return _build_databricks_cluster_target(
-        http_path=os.getenv(
-            "DBT_DATABRICKS_ENDPOINT_HTTP_PATH", os.getenv("DBT_DATABRICKS_HTTP_PATH")
-        )
+        ),
+        schema=os.getenv("DBT_DATABRICKS_UC_INITIAL_SCHEMA", "default_schema"),
     )
 
 
@@ -61,13 +64,16 @@ def databricks_uc_cluster_target():
             "DBT_DATABRICKS_UC_CLUSTER_HTTP_PATH", os.getenv("DBT_DATABRICKS_HTTP_PATH")
         ),
         catalog=os.getenv("DBT_DATABRICKS_UC_INITIAL_CATALOG", "main"),
+        schema=os.getenv("DBT_DATABRICKS_UC_INITIAL_SCHEMA", "default_schema"),
     )
 
 
 def databricks_uc_sql_endpoint_target():
     return _build_databricks_cluster_target(
         http_path=os.getenv(
-            "DBT_DATABRICKS_UC_ENDPOINT_HTTP_PATH", os.getenv("DBT_DATABRICKS_HTTP_PATH")
+            "DBT_DATABRICKS_UC_ENDPOINT_HTTP_PATH",
+            os.getenv("DBT_DATABRICKS_HTTP_PATH"),
         ),
         catalog=os.getenv("DBT_DATABRICKS_UC_INITIAL_CATALOG", "main"),
+        schema=os.getenv("DBT_DATABRICKS_UC_INITIAL_SCHEMA", "default_schema"),
     )

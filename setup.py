@@ -28,7 +28,7 @@ with open(os.path.join(this_directory, "README.md"), "r", encoding="utf8") as f:
 
 
 # get this package's version from dbt/adapters/<name>/__version__.py
-def _get_plugin_version():
+def _get_plugin_version() -> str:
     _version_path = os.path.join(this_directory, "dbt", "adapters", "databricks", "__version__.py")
     try:
         exec(open(_version_path).read())
@@ -54,10 +54,14 @@ setup(
     packages=find_namespace_packages(include=["dbt", "dbt.*"]),
     include_package_data=True,
     install_requires=[
-        "dbt-spark==1.6.0",
-        "databricks-sql-connector~=2.7.0",
-        "databricks-sdk>=0.1.7",
+        "dbt-spark>=1.8.0, <2.0",
+        "dbt-core>=1.8.0, <2.0",
+        "dbt-adapters>=1.3.0, <2.0",
+        "databricks-sql-connector>=3.1.0, <3.2.0",
+        "databricks-sdk==0.17.0",
         "keyring>=23.13.0",
+        "pandas<2.2.0",
+        "protobuf<5.0.0",
     ],
     zip_safe=False,
     classifiers=[

@@ -1,10 +1,18 @@
 import functools
 import inspect
 import re
-from typing import Any, Callable, Type, TypeVar
+from typing import Any
+from typing import Callable
+from typing import Type
+from typing import TYPE_CHECKING
+from typing import TypeVar
 
 from dbt.adapters.base import BaseAdapter
-from jinja2.runtime import Undefined
+from jinja2 import Undefined
+
+if TYPE_CHECKING:
+    from agate import Row
+    from agate import Table
 
 
 A = TypeVar("A", bound=BaseAdapter)
@@ -55,9 +63,7 @@ def undefined_proof(cls: Type[A]) -> Type[A]:
             (
                 staticmethod(wrapped_function)
                 if isstatic
-                else classmethod(wrapped_function)
-                if isclass
-                else wrapped_function
+                else classmethod(wrapped_function) if isclass else wrapped_function
             ),
         )
 
@@ -72,3 +78,17 @@ def _wrap_function(func: Callable) -> Callable:
         return func(*new_args, **new_kwargs)
 
     return wrapper
+
+
+def remove_ansi(line: str) -> str:
+    ansi_escape = re.compile(r"(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]")
+    return ansi_escape.sub("", line)
+
+
+def get_first_row(results: "Table") -> "Row":
+    if len(results.rows) == 0:
+        # Lazy load to improve CLI startup time
+        from agate import Row
+
+        return Row(values=set())
+    return results.rows[0]

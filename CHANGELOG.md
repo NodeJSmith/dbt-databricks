@@ -1,8 +1,305 @@
-## dbt-databricks 1.6.x (Release TBD)
+## dbt-databricks TBD (TBD)
+
+## dbt-databricks 1.8.6 (September 18, 2024)
+
+### Fixes
+
+- Persist table comments for incremental models, snapshots and dbt clone (thanks @henlue!) ([750](https://github.com/databricks/dbt-databricks/pull/750))
+- Add relation identifier (i.e. table name) in auto generated constraint names, also adding the statement of table list for foreign keys (thanks @elca-anh!) ([774](https://github.com/databricks/dbt-databricks/pull/774))
+- Update tblproperties on incremental runs. Note: only adds/edits. Deletes are too risky/complex for now ([765](https://github.com/databricks/dbt-databricks/pull/765))
+- Update default scope/redirect Url for OAuth U2M, so with default OAuth app user can run python models ([776](https://github.com/databricks/dbt-databricks/pull/776))
+- Fix foreign key constraints by switching from `parent` to `to` and `parent_columns` to `to_columns` ([789](https://github.com/databricks/dbt-databricks/pull/789))
+- Now handles external shallow clones without blowing up ([795](https://github.com/databricks/dbt-databricks/pull/795))
+
+## dbt-databricks 1.8.5 (August 6, 2024)
+
+### Fixes
+
+- Alter column statements are now done before the alter table statement (thanks @frankivo!). ([731](https://github.com/databricks/dbt-databricks/pull/731))
+- Always use lower case when gathering metadata (since objects are stored internally as lower case regardless of how we create them) ([742](https://github.com/databricks/dbt-databricks/pull/742))
+- Persist table comments for python models ([743](https://github.com/databricks/dbt-databricks/pull/743))
+- Stop cursor destructor warnings ([744](https://github.com/databricks/dbt-databricks/pull/744))
+- Race condition on cluster creation. (thanks @jurasan!) ([751](https://github.com/databricks/dbt-databricks/pull/751))
+
+## dbt-databricks 1.8.4 (July 17, 2024)
+
+### Fixes
+
+- Fix `dbt seed` command failing for a seed file when the columns for that seed file were partially defined in the properties file. (thanks @kass-artur!) ([724](https://github.com/databricks/dbt-databricks/pull/724))
+- Add more tblproperties to be ignored with MV/ST ([736](https://github.com/databricks/dbt-databricks/pull/736))
+
+### Under the Hood
+
+- Readd the External relation type for compliance with adapter expectations ([728](https://github.com/databricks/dbt-databricks/pull/728))
+
+## dbt-databricks 1.8.3 (June 25, 2024)
+
+### Fixes
+
+- Fix missing catalog name in one of the metadata gathering calls ([714](https://github.com/databricks/dbt-databricks/pull/714))
+
+## dbt-databricks 1.8.2 (June 24, 2024)
+
+### Fixes
+
+- Undo the removal of spark.sql.sources.partitionOverwriteMode = DYNAMIC ([688](https://github.com/databricks/dbt-databricks/pull/688))
+- Set spark.sql.sources.partitionOverwriteMode = STATIC on --full-refresh to ensure existing rows are removed ([697](https://github.com/databricks/dbt-databricks/pull/697))
+- Migrate to using system.information_schema to fix issue with catalog renames ([692](https://github.com/databricks/dbt-databricks/pull/692))
+- Cancel python jobs when dbt operation is canceled (thanks @gaoshihang for kicking this off!) ([693](https://github.com/databricks/dbt-databricks/pull/693))
+- Fix the default redirect_url and scopes of the client `dbt-databricks` ([704](https://github.com/databricks/dbt-databricks/pull/704))
+
+### Under the Hood
+
+- Reduce severity of logging when expected 24 hour token expiration for Azure SPA (thanks @thijs-nijhuis!) ([699](https://github.com/databricks/dbt-databricks/pull/699))
+- Migrate remaining unit tests off of unittest.TestCase ([701](https://github.com/databricks/dbt-databricks/pull/701))
+
+## dbt-databricks 1.8.1 (May 29, 2024)
+
+### Features
+
+- Support Liquid Clustering for python models ([663](https://github.com/databricks/dbt-databricks/pull/663))
+- Update Liquid Clustering columns on is_incremental runs ([686](https://github.com/databricks/dbt-databricks/pull/686))
+
+### Fixes
+
+- Rerunning seed with external location + persist_doc now more resilient ([662](https://github.com/databricks/dbt-databricks/pull/662))
+- Fix issue with running while a refresh is in progress with MV/ST ([674](https://github.com/databricks/dbt-databricks/pull/674))
+- Fix issue with running a refresh with MV/ST that need names to be escaped ([674](https://github.com/databricks/dbt-databricks/pull/674))
+
+### Under the Hood
+
+- Delay loading of agate library to improve startup (thanks @dwreeves for getting this started!) ([661](https://github.com/databricks/dbt-databricks/pull/661))
+- Updating to dbt-adapters~=1.2.0 ([683](https://github.com/databricks/dbt-databricks/pull/683))
+
+## dbt-databricks 1.8.0 (May 23, 2024)
+
+### Features
+
+- Support `on_config_change` for materialized views, expand the supported config options ([536](https://github.com/databricks/dbt-databricks/pull/536)))
+- Support `on_config_change` for streaming tables, expand the supported config options ([569](https://github.com/databricks/dbt-databricks/pull/569)))
+- Support Databricks tags for tables/views/incrementals ([631](https://github.com/databricks/dbt-databricks/pull/631))
+
+### Under the Hood
+
+- Upgrade databricks-sql-connector to 3.1.0 ([593](https://github.com/databricks/dbt-databricks/pull/593))
+- Migrate to decoupled architecture ([596](https://github.com/databricks/dbt-databricks/pull/596))
+- Finish migrating integration tests ([623](https://github.com/databricks/dbt-databricks/pull/623))
+- Streamline the process of determining materialization types ([655](https://github.com/databricks/dbt-databricks/pull/655))
+- Improve catalog performance by getting column description from project for UC ([658](https://github.com/databricks/dbt-databricks/pull/658))
+
+## dbt-databricks 1.7.16 (May 21, 2024)
+
+### Fixes
+
+- Fix the issue that 1.7.15 was intended to fix (conn not initialized exception) ([671](https://github.com/databricks/dbt-databricks/pull/671))
+
+## dbt-databricks 1.7.15 (May 16, 2024)
+
+### Fixes
+
+- Give sensible logs when connection errors ([666](https://github.com/databricks/dbt-databricks/pull/666))
+
+## dbt-databricks 1.7.14 (May 1, 2024)
+
+### Fixes
+
+- Auth headers should now evaluate at call time ([648](https://github.com/databricks/dbt-databricks/pull/648))
+- User-configurable OAuth Scopes (currently limited to AWS) (thanks @stevenayers!) ([641](https://github.com/databricks/dbt-databricks/pull/641))
+
+### Under the hood
+
+- Reduce default idle limit for connection reuse to 60s and start organizing event logging ([648](https://github.com/databricks/dbt-databricks/pull/648))
+
+## dbt-databricks 1.7.13 (April 8, 2024)
+
+### Features
+
+- Apply tblproperties to python models (using alter table) ([633](https://github.com/databricks/dbt-databricks/pull/633))
+- Make OAuth redirect url configurable (thanks @johnsequeira-paradigm for the inspiration!) ([635]https://github.com/databricks/dbt-databricks/pull/635)
+
+### Fixes
+
+- Up default socket timeout to 10 minutes
+
+## dbt-databricks 1.7.11 (Mar 26, 2024)
+
+### Fixes
+
+- For HMS, ref all doc comments from dbt project due to poor performance retrieving them from Databricks ([618](https://github.com/databricks/dbt-databricks/pull/618))
+
+## dbt-databricks 1.7.10 (Mar 19, 2024)
+
+### Fixes
+
+- Fix a corner case for insert into where NULL should be DEFAULT ([607](https://github.com/databricks/dbt-databricks/pull/607))
+- Fixed integration tests that were leaving behind schemas after running ([613](https://github.com/databricks/dbt-databricks/pull/613))
+- Fix performance issue associated with persist docs by turning off incremental catalog generation (thanks @mikealfare!) ([615](https://github.com/databricks/dbt-databricks/pull/615))
+- Pin protobuf to < 5 to stop incompatibility breaks ([616](https://github.com/databricks/dbt-databricks/pull/616))
+
+## dbt-databricks 1.7.9 (Mar 5, 2024)
+
+### Fixes
+
+- Fix for U2M flow on windows (sharding long passwords) (thanks @thijs-nijhuis-shell!) ([597](https://github.com/databricks/dbt-databricks/pull/597))
+- Fix regression in incremental behavior, and align more with dbt-core expectations ([604](https://github.com/databricks/dbt-databricks/pull/604))
+- Don't fail for unknown types when listing schema ([600](https://github.com/databricks/dbt-databricks/pull/600))
+
+## dbt-databricks 1.7.8 (Feb 22, 2024)
+
+### Fixes
+
+- Fixed the behavior of the incremental schema change ignore option to properly handle the scenario when columns are dropped (thanks @case-k-git!) ([580](https://github.com/databricks/dbt-databricks/pull/580))
+- Fixed export of saved queries (thanks @peterallenwebb!) ([588](https://github.com/databricks/dbt-databricks/pull/588))
+- Properly match against null for merging matching rows ([590](https://github.com/databricks/dbt-databricks/pull/590))
+
+## dbt-databricks 1.7.7 (Feb 6, 2024)
+
+### Fixes
+
+- Rollback databricks-sql-connector to 2.9.3 to actually fix connection timeout issue ([578](https://github.com/databricks/dbt-databricks/pull/578))
+
+## dbt-databricks 1.7.6 (Feb 6, 2024)
+
+Skipped due to incorrect files in deployed package
+
+## dbt-databricks 1.7.5 (Jan 30, 2024) (Pulled due to poor SQL Warehouse connection behavior)
+
+### Fixes
+
+- Pin databricks sdk to 0.17.0 to fix connection timeout issue ([571](https://github.com/databricks/dbt-databricks/pull/571))
+
+## dbt-databricks 1.7.4 (Jan 24, 2024) (Pulled due to poor SQL Warehouse connection behavior)
+
+### Fixes
+
+- Added python model specific connection handling to prevent using invalid sessions ([547](https://github.com/databricks/dbt-databricks/pull/547))
+- Allow schema to be specified in testing (thanks @case-k-git!) ([538](https://github.com/databricks/dbt-databricks/pull/538))
+- Fix dbt incremental_strategy behavior by fixing schema table existing check (thanks @case-k-git!) ([530](https://github.com/databricks/dbt-databricks/pull/530))
+- Fixed bug that was causing streaming tables to be dropped and recreated instead of refreshed. ([552](https://github.com/databricks/dbt-databricks/pull/552))
+- Fixed Hive performance regression by streamlining materialization type acquisition ([557](https://github.com/databricks/dbt-databricks/pull/557))
+- Fix: Python models authentication could be overridden by a `.netrc` file in the user's home directory ([338](https://github.com/databricks/dbt-databricks/pull/338))
+- Fix: MV/ST REST api authentication could be overriden by a `.netrc` file in the user's home directory ([555](https://github.com/databricks/dbt-databricks/pull/555))
+- Show details in connection errors ([562](https://github.com/databricks/dbt-databricks/pull/562))
+- Updated connection debugging logging and setting connection last used time on session open.([565](https://github.com/databricks/dbt-databricks/pull/565))
+
+### Under the Hood
+
+- Adding retries around API calls in python model submission ([549](https://github.com/databricks/dbt-databricks/pull/549))
+- Upgrade to databricks-sql-connector 3.0.0 ([554](https://github.com/databricks/dbt-databricks/pull/554))
+- Pinning pandas to < 2.2.0 to keep from breaking multiple tests ([564](https://github.com/databricks/dbt-databricks/pull/554))
+
+## dbt-databricks 1.7.3 (Dec 12, 2023)
+
+### Fixes
+
+- Fix for issue where we were invoking create schema or not exists when the schema already exists (leading to permission issue) ([529](https://github.com/databricks/dbt-databricks/pull/529))
+- Fix for issue where we never reused connections ([517](https://github.com/databricks/dbt-databricks/pull/517))
+
+### Under the Hood
+
+- Refactor macro tests to be more usable ([524](https://github.com/databricks/dbt-databricks/pull/524))
+
+## dbt-databricks 1.7.2 (Nov 30, 2023)
+
+### Features
+
+- Adding capability to specify compute on a per model basis ([488](https://github.com/databricks/dbt-databricks/pull/488))
+- Selectively persist column docs that have changed between runs of incremental ([513](https://github.com/databricks/dbt-databricks/pull/513))
+- Enabling access control list for job runs (thanks @srggrs!)([518](https://github.com/databricks/dbt-databricks/pull/518))
+- Allow persisting of column comments on views and retrieving comments for docs on Hive ([519](https://github.com/databricks/dbt-databricks/pull/519))
+
+## dbt-databricks 1.7.1 (Nov 13, 2023)
+
+### Under the Hood
+
+- Another attempt to improve catalog gathering performance ([503](https://github.com/databricks/dbt-databricks/pull/503))
+
+## dbt-databricks 1.7.0 (November 9, 2023)
+
+### Features
+
+- Added support for getting info only on specified relations to improve performance of gathering metadata ([486](https://github.com/databricks/dbt-databricks/pull/486)), also (with generous help from from @mikealfare) ([499](https://github.com/databricks/dbt-databricks/pull/499))
+- Added support for getting freshness from metadata ([481](https://github.com/databricks/dbt-databricks/pull/481))
+
+### Fixes
+
+- Node info now gets added to SQLQuery event (thanks @davidharting!) ([494](https://github.com/databricks/dbt-databricks/pull/494))
+- Compatibility with dbt-spark and dbt-core 1.7.1 ([499](https://github.com/databricks/dbt-databricks/pull/499))
+
+### Under the Hood
+
+- Added required adapter tests to ensure compatibility with 1.7.0 ([487](https://github.com/databricks/dbt-databricks/pull/487))
+- Improved large seed performance by not casting every value (thanks @nrichards17!) ([493](https://github.com/databricks/dbt-databricks/pull/493)). Note: for `file_format="parquet"` we still need to cast.
+
+## dbt-databricks 1.7.0rc1 (October 13, 2023)
+
+### Fixes
+
+- Fixed a bug where setting a primary key constraint before a null constraint would fail by ensuring null constraints happen first ([479](https://github.com/databricks/dbt-databricks/pull/479))
+- Foreign key constraints now work with dbt's constraint structure ([479](https://github.com/databricks/dbt-databricks/pull/479))
+
+### Under the Hood
+
+- Compatibility with dbt-spark 1.7.0rc1 ([479](https://github.com/databricks/dbt-databricks/pull/479))
+
+## dbt-databricks 1.6.6 (October 9, 2023)
+
+### Fixes
+
+- Optimize now runs after creating / updating liquid clustering tables ([463](https://github.com/databricks/dbt-databricks/pull/463))
+- Fixing an issue where the new python library install from index behavior breaks users who were already customizing their installs ([472](https://github.com/databricks/dbt-databricks/pull/472))
+
+### Under the Hood
+
+- fix Pylance import errors (thanks @dataders) ([471](https://github.com/databricks/dbt-databricks/pull/471))
+
+## dbt-databricks 1.6.5 (September 26, 2023)
+
+### Features
+
+- When installing python libraries onto clusters, you can now specify an index_url (Thanks @casperdamen123) ([367](https://github.com/databricks/dbt-databricks/pull/367))
+- Log job run information such as run_id when submitting Python jobs to databricks (Thanks @jeffrey-harrison) ([#454](https://github.com/databricks/dbt-databricks/pull/454))
+
+### Fixes
+
+- Node info now gets added to SQLQueryStatus (Thanks @colin-rogers-dbt) ([453](https://github.com/databricks/dbt-databricks/pull/453))
+- Fixing python model compatibility with newer DBRs ([459](https://github.com/databricks/dbt-databricks/pull/459))
+- Updated the Databricks SDK dependency so as to prevent reliance on an insecure version of requests ([460](https://github.com/databricks/dbt-databricks/pull/460))
+- Update logic around submitting python jobs so that if the cluster is already starting, just wait for it to start rather than failing ([461](https://github.com/databricks/dbt-databricks/pull/461))
+
+## dbt-databricks 1.6.4 (September 14, 2023)
+
+### Fixes
+
+- Fixed an issue with AWS OAuth M2M flow ([#445](https://github.com/databricks/dbt-databricks/pull/445))
+- Fixed an issue where every table in hive_metastore would get described ([#446](https://github.com/databricks/dbt-databricks/pull/446))
+
+## dbt-databricks 1.6.3 (September 8, 2023)
+
+### Fixes
+
+- Improved legibility of python stack traces ([#434](https://github.com/databricks/dbt-databricks/pull/434)).
+- Add `fetchmany`, resolves #408 (Thanks @NodeJSmith) ([#409](https://github.com/databricks/dbt-databricks/pull/409))
+- Improved legibility of python stack traces ([#434](https://github.com/databricks/dbt-databricks/pull/434))
+- Update our Databricks Workflow README to make clear that jobs clusters are not supported targets ([#436](https://github.com/databricks/dbt-databricks/pull/436))
+- Relaxed the constraint on databricks-sql-connector to allow newer versions ([#436](https://github.com/databricks/dbt-databricks/pull/436))
+- Streamlined sql connector output in dbt.log ([#437](https://github.com/databricks/dbt-databricks/pull/437))
+
+### Under the hood
+
+- Switch to running integration tests with OAuth ([#436](https://github.com/databricks/dbt-databricks/pull/436))
+
+## dbt-databricks 1.6.2 (August 29, 2023)
 
 ### Features
 
 - Follow up: re-implement fix for issue where the show tables extended command is limited to 2048 characters. ([#326](https://github.com/databricks/dbt-databricks/pull/326)). Set `DBT_DESCRIBE_TABLE_2048_CHAR_BYPASS` to `true` to enable this behaviour.
+- Add `liquid_clustered_by` config to enable Liquid Clustering for Delta-based dbt models (Thanks @ammarchalifah) ([#398](https://github.com/databricks/dbt-databricks/pull/398)).
+
+### Under the hood
+
+- Dropping the databricks_sql_endpoint test profile as not truly testing different behavior than databricks_uc_sql_endpoint profile ([#417](https://github.com/databricks/dbt-databricks/pull/417))
+- Improve testing of python model support so that we can package the new config options in this release ([#421](https://github.com/databricks/dbt-databricks/pull/421))
 
 - Add `fetchmany`, resolves #408
 
