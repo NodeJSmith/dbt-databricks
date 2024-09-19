@@ -3,14 +3,21 @@ from typing import Dict
 from typing import Optional
 
 from databricks.sdk.core import Config
-from databricks.sdk.core import credentials_provider
-from databricks.sdk.core import CredentialsProvider
-from databricks.sdk.core import HeaderFactory
 from databricks.sdk.oauth import ClientCredentials
 from databricks.sdk.oauth import Token
 from databricks.sdk.oauth import TokenSource
 from requests import PreparedRequest
 from requests.auth import AuthBase
+
+try:
+    from databricks.sdk.core import credentials_provider
+    from databricks.sdk.core import CredentialsProvider
+    from databricks.sdk.core import HeaderFactory
+except ImportError:
+    from databricks.sdk.core import credentials_strategy as credentials_provider
+    from databricks.sdk.core import CredentialsProvider
+    from databricks.sdk.core import CredentialsProvider as HeaderFactory
+
 
 
 class token_auth(CredentialsProvider):
